@@ -2,8 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Chicken AR Experience</title>
-    <!-- Reliable A-Frame & AR.js CDN links -->
+    <title>Crow AR Experience</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
@@ -11,7 +10,7 @@
     <!-- Scales the model so its longest side equals "size" (Hiro marker = 1 unit wide) -->
     <script>
       AFRAME.registerComponent('fit-to-size', {
-        schema: { size: { type: 'number', default: 0.3 } },
+        schema: { size: { type: 'number', default: 0.2 } },
         init: function () {
           this.el.addEventListener('model-loaded', () => {
             const mesh = this.el.getObject3D('mesh');
@@ -40,33 +39,27 @@
       xr-mode-ui="enabled: false;"
       arjs="sourceType: webcam; debugUIEnabled: false;">
 
-      <!-- Preload Custom Assets -->
       <a-assets>
-        <!-- Force browser to look in current folder -->
-        <audio id="chicken-audio" src="./hiro.mp3" preload="auto"></audio>
-        <a-asset-item id="chicken-model" src="./chicken.glb"></a-asset-item>
+        <audio id="crow-audio" src="./hiro.mp3" preload="auto"></audio>
+        <a-asset-item id="crow-model" src="./low_poly_crow_npc.glb"></a-asset-item>
       </a-assets>
 
       <!-- Target Marker (Hiro) -->
       <a-marker preset="hiro" id="marker">
-        <!-- Test Cube: If this appears, your marker tracking is working (delete when done) -->
-        <a-box position="0 0.5 0" color="red" scale="0.2 0.2 0.2"></a-box>
-
-        <!-- 3D Chicken Model: longest side = 0.3 (about a 3x3 cube) -->
+        <!-- Crow: longest side = 0.2 marker-widths (Rubik's cube size). Change 0.2 to resize -->
         <a-gltf-model
-          src="#chicken-model"
+          src="#crow-model"
           position="0 0 0"
-          fit-to-size="size: 0.3">
+          fit-to-size="size: 0.2">
         </a-gltf-model>
 
-        <a-entity sound="src: #chicken-audio; autoplay: false"></a-entity>
+        <a-entity sound="src: #crow-audio; autoplay: false"></a-entity>
       </a-marker>
 
       <a-entity camera></a-entity>
     </a-scene>
 
     <script>
-      // Unlock mobile audio on user tap
       const gestureOverlay = document.querySelector('#user-gesture');
       gestureOverlay.addEventListener('click', () => {
         gestureOverlay.style.display = 'none';
@@ -76,14 +69,12 @@
         const marker = document.querySelector('#marker');
         const sound = document.querySelector('a-entity[sound]');
 
-        // Play hiro.mp3 when Hiro marker is scanned
         marker.addEventListener('markerFound', () => {
           if (sound && sound.components.sound) {
             sound.components.sound.playSound();
           }
         });
 
-        // Pause audio when Hiro marker leaves camera view
         marker.addEventListener('markerLost', () => {
           if (sound && sound.components.sound) {
             sound.components.sound.pauseSound();
